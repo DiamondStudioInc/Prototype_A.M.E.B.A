@@ -65,6 +65,9 @@ power_img.set_colorkey(BLACK)
 pass_btn = pygame.image.load(img + "button/passive_button.png")
 active_btn = pygame.image.load(img + "button/active_button.png")
 
+pass_dead_btn = pygame.image.load(img + "button/passive_dead_button.png")
+active_dead_btn = pygame.image.load(img + "button/active_dead_button.png")
+
 money_img = pygame.image.load(img + "money_img.png").convert()
 money_img.set_colorkey(BLACK)
 money_max_img = pygame.transform.scale(money_img, (60, 60))
@@ -450,8 +453,40 @@ start_loop()
 react_jump = False
 bonus = 0
 
+def death_loop():
+
+    global on_dead
+
+    on_dead = True
+
+    pygame.mixer.music.pause()
+    level["score"] = 0
+
+    def restart():
+        player.rect.x = WIDTH//2
+        player.rect.y = HEIGHT//2
+        global on_dead
+        on_dead = False
+        print(on_dead)
+
+    while on_dead:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+        screen.fill(BLACK)
+
+        mod.Button(master=screen,
+                   text="Restart",
+                   x=200,
+                   y=160,
+                   pass_img=pass_dead_btn,
+                   sound=btn_snd,
+                   active_img=active_dead_btn,
+                   command=restart)
 
 
+
+        pygame.display.flip()
 
 # Цикл игры
 running = True
@@ -490,6 +525,10 @@ while running:
     # Держим цикл на правильной скорости
     clock.tick(FPS)
     # Ввод процесса (события)
+
+    # ПРоверка умер л персонаж или нет?
+    if player.rect.y > HEIGHT + 70:
+        death_loop()
 
     hits = pygame.sprite.spritecollide(player, blocks, False)
     bonus_hits = pygame.sprite.spritecollide(player, bonuses, True)
