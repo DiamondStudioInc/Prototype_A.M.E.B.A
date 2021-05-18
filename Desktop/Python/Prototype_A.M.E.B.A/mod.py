@@ -2,6 +2,7 @@ import pygame
 
 pygame.font.init()
 
+
 class Text():
     def __init__(self,master, text, x, y, font_size=36, font= None,color = (0,0,0)) -> None:
         """
@@ -44,7 +45,7 @@ class Bar():
         pygame.draw.rect(master, fg, fonground)
         
 class Button():
-    def __init__(self,master, x, y, text,  pass_img, active_img, command, color = (0,0,0)):
+    def __init__(self,master, x, y, text,  pass_img, active_img, sound, command, color = (0,0,0)):
         """
 
         :param master: Экран для размещения
@@ -66,8 +67,8 @@ class Button():
         pressed = pygame.mouse.get_pressed()
         pos = pygame.mouse.get_pos()
 
-        
-      
+
+
         if pressed[0]:
             if rect.collidepoint(pos[0], pos[1]):
                 on_pressed = True
@@ -75,12 +76,13 @@ class Button():
 
         if on_pressed:
             command()
-            on_pressed = False
+            pygame.mixer.Sound(sound).play()
+            pygame.time.delay(250)
 
         if rect.collidepoint(pos[0], pos[1]):
             master.blit(active_img,(x,y))
         else:
-            master.blit(pass_img,(x,y))         
+            master.blit(pass_img,(x,y))
         Text(master = master,
         text = text,
         x = (rect.x + rect.width//2) -   20 ,

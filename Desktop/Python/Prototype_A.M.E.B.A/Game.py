@@ -91,6 +91,7 @@ money_1_snd = pygame.mixer.Sound(snd + "money_1.wav")
 money_2_snd = pygame.mixer.Sound(snd + "money_2.wav")
 money_sounds = [money_1_snd, money_1_snd]
 
+btn_snd = pygame.mixer.Sound(snd + "button.wav")
 
 if init.music:
     pygame.mixer.music.set_volume(init.music_volume)
@@ -347,6 +348,7 @@ def shop_loop():
                                pass_img = pass_btn,
                                active_img = active_btn,
                                color = GREEN,
+                               sound=btn_snd,
                                command = lambda: pay(product))
                 else:
                     mod.Button(master=screen,
@@ -356,6 +358,7 @@ def shop_loop():
                                pass_img=pass_btn,
                                active_img=active_btn,
                                color=RED,
+                               sound=btn_snd,
                                command=lambda: pay(product))
             else:
                 mod.Button(master=screen,
@@ -365,6 +368,7 @@ def shop_loop():
                            pass_img=pass_btn,
                            active_img=active_btn,
                            color= YELLOW,
+                           sound=btn_snd,
                            command=passive)
 
         screen.blit(money_max_img, (WIDTH - 140, -8))
@@ -379,17 +383,22 @@ def shop_loop():
                y=300,
                pass_img=pass_btn,
                active_img=active_btn,
+               sound=btn_snd,
                command=lambda: stop_shop())
         pygame.display.flip()
 
 
 #цикл паузы
 def pause_loop():
+
+    pygame.mixer.music.pause()
+
     global pause
     pause = True
     def stop_pause():
         global pause
         pause = False
+        pygame.mixer.music.unpause()
         
 
     while pause:
@@ -408,6 +417,7 @@ def pause_loop():
         y = 80, 
         pass_img = pass_btn,
         active_img = active_btn,
+        sound=btn_snd,
         command = stop_pause)
 
         mod.Button(master = screen,
@@ -416,6 +426,7 @@ def pause_loop():
         y = 240,
         pass_img = pass_btn, 
         active_img = active_btn,
+        sound=btn_snd,
         command = lambda: sys.exit())
 
         mod.Button(master = screen,
@@ -423,6 +434,7 @@ def pause_loop():
                    x = 200,
                    y = 160,
                    pass_img = pass_btn,
+                   sound=btn_snd,
                    active_img = active_btn,
                    command = shop_loop)
         screen.blit(money_max_img, (WIDTH - 140, -8))
@@ -493,13 +505,15 @@ while running:
             with open("save_eq.txt", "wb") as f:
                 pickle.dump(products, f)
             running = False
+
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pause_loop()
             if event.key == pygame.K_s:
                 shop_loop()
             if event.key == pygame.K_SPACE:
-                
+
                 if not(hits):
                     if player.energy - 25 >= 0:
                         player.is_jump = True
