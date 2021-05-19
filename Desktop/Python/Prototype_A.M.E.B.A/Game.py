@@ -335,7 +335,7 @@ def shop_loop():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                exit()
 
         screen.fill(BLACK)
 
@@ -389,8 +389,15 @@ def shop_loop():
                sound=btn_snd,
                command=lambda: stop_shop())
         pygame.display.flip()
+def save():
+    with open("save.txt", "wb") as f:
+        pickle.dump(level, f)
+    with open("save_eq.txt", "wb") as f:
+        pickle.dump(products, f)
 
-
+def exit():
+    save()
+    sys.exit()
 #цикл паузы
 def pause_loop():
 
@@ -407,7 +414,7 @@ def pause_loop():
     while pause:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                exit()
 
         screen.fill(BLACK)
         
@@ -465,14 +472,18 @@ def death_loop():
     def restart():
         player.rect.x = WIDTH//2
         player.rect.y = HEIGHT//2
+
+        pygame.mixer.music.play()
+
         global on_dead
+
         on_dead = False
         print(on_dead)
 
     while on_dead:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                exit()
         screen.fill(BLACK)
 
         mod.Button(master=screen,
@@ -483,6 +494,14 @@ def death_loop():
                    sound=btn_snd,
                    active_img=active_dead_btn,
                    command=restart)
+        mod.Button(master=screen,
+                   text="Exit",
+                   x=200,
+                   y=220,
+                   pass_img=pass_dead_btn,
+                   sound=btn_snd,
+                   active_img=active_dead_btn,
+                   command=sys.exit)
 
 
 
@@ -539,11 +558,7 @@ while running:
     for event in pygame.event.get():
         # проверка для закрытия окна
         if event.type == pygame.QUIT:
-            with open("save.txt", "wb") as f:
-                pickle.dump(level, f)
-            with open("save_eq.txt", "wb") as f:
-                pickle.dump(products, f)
-            running = False
+            exit()
 
 
         if event.type == pygame.KEYDOWN:

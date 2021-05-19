@@ -45,7 +45,7 @@ class Bar():
         pygame.draw.rect(master, fg, fonground)
         
 class Button():
-    def __init__(self,master, x, y, text,  pass_img, active_img, sound, command, color = (0,0,0)):
+    def __init__(self,master, x, y, text,  pass_img, active_img, sound, command, active_color=(255, 255, 255), color = (0,0,0)):
         """
 
         :param master: Экран для размещения
@@ -62,7 +62,7 @@ class Button():
         rect.x = x
         rect.y = y
 
-
+        this_color = color
 
         pressed = pygame.mouse.get_pressed()
         pos = pygame.mouse.get_pos()
@@ -81,12 +81,14 @@ class Button():
 
         if rect.collidepoint(pos[0], pos[1]):
             master.blit(active_img,(x,y))
+            this_color = active_color
         else:
             master.blit(pass_img,(x,y))
+            this_color = color
         Text(master = master,
         text = text,
         x = (rect.x + rect.width//2) -   20 ,
         y = rect.y + rect.height//2,
         font_size = 25,
-        color = color
+        color = this_color
         )
