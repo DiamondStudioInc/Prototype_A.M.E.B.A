@@ -151,11 +151,10 @@ class Player(pygame.sprite.Sprite):
                 self.count = 1
                 self.counter = 0
                 self.is_jump = False
-        
-            
+
         self.rect.x += self.speedx
         
-        
+
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
         if self.rect.left < 0:
@@ -293,18 +292,7 @@ except:
                 ["Штаны", 70, 240, False]
                 ]
 
-def start_loop():
 
-    start = True
-    
-    while start:
-        for event in pygame.event.get():
-           if event.type == pygame.QUIT:
-               start = False
-           if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-               start = False
-        screen.blit(start_screen,(0,0))       
-        pygame.display.flip()
 
 #Покупка
 def pay(x):
@@ -455,12 +443,14 @@ def pause_loop():
                  color = (255,255,255))
 
         pygame.display.flip()
-start_loop()
+
+
+
 
 react_jump = False
 bonus = 0
 
-def death_loop():
+def death_menu():
 
     global on_dead
 
@@ -507,6 +497,85 @@ def death_loop():
 
         pygame.display.flip()
 
+def death_loop():
+
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    run = False
+                    death_menu()
+        screen.fill(BLACK)
+
+
+        mod.Text(master = screen,
+                 x = WIDTH//2,
+                 y = HEIGHT//2 - 100,
+                 text = "YOU DEAD",
+                 color = (255, 0, 0),
+                 font_size = 100
+                 )
+        mod.Text(master = screen,
+                 x = WIDTH//2,
+                 y = HEIGHT//2,
+                 text = "Press SPACE to continue",
+                 color = (255, 0, 0),
+                 font_size = 50
+                 )
+
+        pygame.display.flip()
+def start_menu():
+    global run
+    run = True
+
+    def start():
+        global run
+        run = False
+
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+        screen.fill(BLACK)
+
+        mod.Button(master=screen,
+                   text="Start",
+                   x=200,
+                   y=160,
+                   pass_img=pass_btn,
+                   sound=btn_snd,
+                   active_img=active_btn,
+                   command=start)
+        mod.Button(master=screen,
+                   text="Exit",
+                   x=200,
+                   y=220,
+                   pass_img=pass_btn,
+                   sound=btn_snd,
+                   active_img=active_btn,
+                   command=sys.exit)
+
+        pygame.display.flip()
+
+def start_loop():
+    start = True
+
+    while start:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                start = False
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                start = False
+                start_menu()
+        screen.fill(BLACK)
+        screen.blit(start_screen, (0, 0))
+        pygame.display.flip()
+start_loop()
+
 # Цикл игры
 running = True
 while running:
@@ -514,6 +583,12 @@ while running:
 
     if level["num"]  > 1:
         background = pygame.image.load(img + "fons/fon_2.png")
+        background_rect = background.get_rect()
+    if level["num"] > 2:
+        background = pygame.image.load(img + "fons/fon_3.png")
+        background_rect = background.get_rect()
+    if level["num"] >3:
+        background = pygame.image.load(img + "fons/fon_4.png")
         background_rect = background.get_rect()
 
     if level["score"] >= level["next"]:
@@ -593,14 +668,17 @@ while running:
         is_hits = True
     else:
         is_hits = False
+
     if bonus_hits:
         if player.energy + 25 <= 100:
             player.energy += 25
             bonus = 35
             play_sound(power_snd)
+
     if money_hits:
         level["money"] += 1
         play_sound(random.choice(money_sounds))
+
 
 
     player.rect.y += player.speedy
